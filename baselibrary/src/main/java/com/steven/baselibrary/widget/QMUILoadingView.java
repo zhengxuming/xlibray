@@ -42,7 +42,7 @@ public class QMUILoadingView extends View {
     public QMUILoadingView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         TypedArray array = getContext().obtainStyledAttributes(attrs, R.styleable.QMUILoadingView, defStyleAttr, 0);
-        mSize = array.getDimensionPixelSize(R.styleable.QMUILoadingView_qmui_loading_view_size, ScreenUtils.dp2px(32));
+        mSize = array.getDimensionPixelSize(R.styleable.QMUILoadingView_qmui_loading_view_size, ScreenUtils.dp2px(context,32));
         mPaintColor = array.getInt(R.styleable.QMUILoadingView_android_color, Color.WHITE);
         array.recycle();
         initPaint();

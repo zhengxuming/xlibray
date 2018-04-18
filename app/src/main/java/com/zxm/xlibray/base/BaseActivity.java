@@ -189,24 +189,10 @@ public abstract class BaseActivity extends FragmentActivity {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        if (EventBus.getDefault().isRegistered(this)) {
-            return;
-        }
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
     protected void onDestroy() {
-        if (EventBus.getDefault().isRegistered(this)){
-            EventBus.getDefault().unregister(this);
-        }
         unsubscribe();
         super.onDestroy();
     }
-
-    private boolean hasConnectOff=false;
 
     /**
      * 跳转activity

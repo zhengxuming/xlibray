@@ -1,5 +1,6 @@
 package com.steven.baselibrary.widget.recyclerview.recyclerviewflexibledivider;
 
+import android.content.Context;
 import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -15,9 +16,9 @@ public class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {
     private int spacing;
     private boolean includeEdge;
 
-    public GridSpacingItemDecoration(int spanCount, int spacing, boolean includeEdge) {
+    public GridSpacingItemDecoration(Context context,int spanCount, int spacing, boolean includeEdge) {
         this.spanCount = spanCount;
-        this.spacing = ScreenUtils.dp2px(spacing);
+        this.spacing = ScreenUtils.dp2px(context,spacing);
         this.includeEdge = includeEdge;
     }
 

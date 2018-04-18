@@ -26,6 +26,7 @@ import com.steven.baselibrary.widget.recyclerview.listener.OnItemClickListener;
 import com.steven.baselibrary.widget.recyclerview.listener.OnItemLongClickListener;
 import com.steven.baselibrary.widget.recyclerview.recyclerviewflexibledivider.GridSpacingItemDecoration;
 import com.steven.baselibrary.widget.recyclerview.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
+import com.zxm.xlibray.R;
 
 import java.util.List;
 
@@ -224,7 +225,7 @@ public abstract class ListBaseFragment<ADT, AD extends BaseQuickAdapter> extends
     public void setGridLayoutCount(int count, int spacing) {
         if (hasRecyclerView()) {
             rv_list.setLayoutManager(new GridLayoutManager(rv_list.getContext(), count));
-            rv_list.addItemDecoration(new GridSpacingItemDecoration(count, spacing, false));
+            rv_list.addItemDecoration(new GridSpacingItemDecoration(getActivity(),count, spacing, false));
         }
 
     }
@@ -264,17 +265,23 @@ public abstract class ListBaseFragment<ADT, AD extends BaseQuickAdapter> extends
                 adapter.notifyDataSetChanged();
                 adapter.removeAllFooterView();
             } else if (newData.size() < perPageSize) {
+                setLoadMoreEnable(false);
                 adapter.setNewData(newData);
                 toEnd();
             } else {
+                setLoadMoreEnable(true);
                 adapter.setNewData(newData);
             }
         } else {
-            if (newData.size() < perPageSize) {
-                if (newData.size() > 0)
-                    adapter.addData(newData);
+            if (newData.size() == 0) {
+                setLoadMoreEnable(false);
+            } else if (newData.size() < perPageSize) {
+                setLoadMoreEnable(false);
+                adapter.addData(newData);
+                adapter.notifyDataSetChanged();
                 toEnd();
             } else {
+                setLoadMoreEnable(true);
                 adapter.addData(newData);
                 adapter.loadMoreComplete();
             }
@@ -287,11 +294,6 @@ public abstract class ListBaseFragment<ADT, AD extends BaseQuickAdapter> extends
     private void addEmptyView() {
         adapter.setEmptyView(viewNoData);
     }
-
-//    public RecyclerBaseAdapter<ADT, HT> getAdapter() {
-//        return adapter;
-//    }
-
 
     public void toEnd() {
         if (adapter != null) {
@@ -319,19 +321,16 @@ public abstract class ListBaseFragment<ADT, AD extends BaseQuickAdapter> extends
     public void onFailed(String text) {
         if (mSwipeRefreshLayout != null)
             mSwipeRefreshLayout.setRefreshing(false);
-        if (adapter != null)
-            ((TextView) viewErro.findViewById(com.steven.baselibrary.R.id.empty_error_tv)).setText(text);
-        adapter.setEmptyView(viewErro);
-        adapter.loadMoreFail();
+        if (adapter != null) {
+            ((TextView) viewErro.findViewById(R.id.empty_error_tv)).setText(text);
+            adapter.setEmptyView(viewErro);
+            adapter.loadMoreFail();
+        }
     }
 
     public void setLoadMoreEnable(boolean isShowEnd) {
         this.isShowEnd = isShowEnd;
-        if (isShowEnd) {
-            adapter.setOnLoadMoreListener(this);
-        } else {
-            adapter.setOnLoadMoreListener(null);
-        }
+        adapter.setEnableLoadMore(isShowEnd);
     }
 
     public void addHeaderView(View header) {

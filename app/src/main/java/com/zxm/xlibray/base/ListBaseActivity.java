@@ -29,6 +29,7 @@ import com.steven.baselibrary.widget.recyclerview.listener.OnItemClickListener;
 import com.steven.baselibrary.widget.recyclerview.listener.OnItemLongClickListener;
 import com.steven.baselibrary.widget.recyclerview.recyclerviewflexibledivider.GridSpacingItemDecoration;
 import com.steven.baselibrary.widget.recyclerview.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
+import com.zxm.xlibray.R;
 
 import java.util.List;
 
@@ -75,13 +76,13 @@ public abstract class ListBaseActivity<ADT, AD extends BaseQuickAdapter> extends
         adapter.setEmptyView(viewNoData);
     }
 
-    public void initListView(AD madapter, RecyclerView.LayoutManager manager,boolean hasEmptyView) {
+    public void initListView(AD madapter, RecyclerView.LayoutManager manager, boolean hasEmptyView) {
         this.adapter = madapter;
         rv_list.setLayoutManager(manager);
         setOnRefreshListener(this);
         this.adapter.setOnLoadMoreListener(this);
         setAdapter(madapter, null);
-        if (hasEmptyView){
+        if (hasEmptyView) {
             adapter.setEmptyView(viewNoData);
         }
     }
@@ -157,7 +158,7 @@ public abstract class ListBaseActivity<ADT, AD extends BaseQuickAdapter> extends
         if (rv_list != null) {
             return true;
         }
-        MyToast.getInstance().showError(this,"Not found RecyclerView");
+        MyToast.getInstance().showError(this, "Not found RecyclerView");
         return false;
     }
 
@@ -191,9 +192,9 @@ public abstract class ListBaseActivity<ADT, AD extends BaseQuickAdapter> extends
             if (dividerColor == -1)
                 dividerColor = com.steven.baselibrary.R.color.transparent;
             if (dividerHeight != -1)
-                itemDecoration = new HorizontalDividerItemDecoration.Builder(rv_list.getContext()).size(ScreenUtils.dp2px(this,dividerHeight)).color(rv_list.getContext().getResources().getColor(dividerColor)).build();
+                itemDecoration = new HorizontalDividerItemDecoration.Builder(rv_list.getContext()).size(ScreenUtils.dp2px(this, dividerHeight)).color(rv_list.getContext().getResources().getColor(dividerColor)).build();
         } else {
-            itemDecoration = new HorizontalDividerItemDecoration.Builder(this).size(ScreenUtils.dp2px(this,1)).color(rv_list.getContext().getResources().getColor(com.steven.baselibrary.R.color.gray_listLine)).build();
+            itemDecoration = new HorizontalDividerItemDecoration.Builder(this).size(ScreenUtils.dp2px(this, 1)).color(rv_list.getContext().getResources().getColor(com.steven.baselibrary.R.color.gray_listLine)).build();
         }
         return itemDecoration;
 
@@ -224,7 +225,7 @@ public abstract class ListBaseActivity<ADT, AD extends BaseQuickAdapter> extends
     public void setGridLayoutCount(int count, int spacing) {
         if (hasRecyclerView()) {
             rv_list.setLayoutManager(new GridLayoutManager(rv_list.getContext(), count));
-            rv_list.addItemDecoration(new GridSpacingItemDecoration(count, spacing, false));
+            rv_list.addItemDecoration(new GridSpacingItemDecoration(this,count, spacing, false));
         }
 
     }
@@ -267,14 +268,18 @@ public abstract class ListBaseActivity<ADT, AD extends BaseQuickAdapter> extends
                 adapter.setNewData(newData);
                 toEnd();
             } else {
+                setLoadMoreEnable(true);
                 adapter.setNewData(newData);
             }
         } else {
-            if (newData.size() < perPageSize) {
-                if (newData.size() > 0)
-                    adapter.addData(newData);
+            if (newData.size() == 0) {
+                setLoadMoreEnable(false);
+            } else if (newData.size() < perPageSize) {
+                adapter.addData(newData);
+                adapter.notifyDataSetChanged();
                 toEnd();
             } else {
+                setLoadMoreEnable(true);
                 adapter.addData(newData);
                 adapter.loadMoreComplete();
             }
@@ -287,11 +292,6 @@ public abstract class ListBaseActivity<ADT, AD extends BaseQuickAdapter> extends
     private void addEmptyView() {
         adapter.setEmptyView(viewNoData);
     }
-
-//    public RecyclerBaseAdapter<ADT, HT> getAdapter() {
-//        return adapter;
-//    }
-
 
     public void toEnd() {
         if (adapter != null) {
@@ -315,31 +315,30 @@ public abstract class ListBaseActivity<ADT, AD extends BaseQuickAdapter> extends
     public void onFailed() {
         if (mSwipeRefreshLayout != null)
             mSwipeRefreshLayout.setRefreshing(false);
-        if (adapter != null)
+        if (adapter != null) {
             adapter.setEmptyView(viewNoData);
-        adapter.loadMoreFail();
+            adapter.loadMoreFail();
+        }
     }
 
     public void onFailed(String text) {
         if (mSwipeRefreshLayout != null)
             mSwipeRefreshLayout.setRefreshing(false);
-        if (adapter != null)
-            ((TextView)viewErro.findViewById(com.steven.baselibrary.R.id.empty_error_tv)).setText(text);
+        if (adapter != null) {
+            ((TextView) viewErro.findViewById(R.id.empty_error_tv)).setText(text);
             adapter.setEmptyView(viewErro);
-        adapter.loadMoreFail();
+            adapter.loadMoreFail();
+        }
     }
 
     public void setLoadMoreEnable(boolean isShowEnd, BaseBindAdapter.RequestLoadMoreListener requestLoadMoreListener) {
         this.isShowEnd = isShowEnd;
-        adapter.setOnLoadMoreListener(requestLoadMoreListener);
+        adapter.setOnLoadMoreListener(requestLoadMoreListener, rv_list);
     }
 
     public void setLoadMoreEnable(boolean isShowEnd) {
         this.isShowEnd = isShowEnd;
         adapter.setEnableLoadMore(isShowEnd);
-        if (isShowEnd) {
-            adapter.setOnLoadMoreListener(this);
-        }
     }
 
     public void addHeaderView(View header) {

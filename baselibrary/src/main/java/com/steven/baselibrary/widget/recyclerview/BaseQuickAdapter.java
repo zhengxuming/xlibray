@@ -376,6 +376,7 @@ public abstract class BaseQuickAdapter<T, K extends BaseViewHolder> extends Recy
             mLoadMoreView.setLoadMoreStatus(LoadMoreView.STATUS_END);
             notifyItemChanged(getLoadMoreViewPosition());
         }
+        notifyDataSetChanged();
     }
 
     /**
@@ -388,7 +389,8 @@ public abstract class BaseQuickAdapter<T, K extends BaseViewHolder> extends Recy
         mLoading = false;
         mNextLoadEnable = true;
         mLoadMoreView.setLoadMoreStatus(LoadMoreView.STATUS_DEFAULT);
-        notifyItemChanged(getLoadMoreViewPosition());
+//        notifyItemChanged(getLoadMoreViewPosition());
+        notifyDataSetChanged();
     }
 
     /**
@@ -400,7 +402,8 @@ public abstract class BaseQuickAdapter<T, K extends BaseViewHolder> extends Recy
         }
         mLoading = false;
         mLoadMoreView.setLoadMoreStatus(LoadMoreView.STATUS_FAIL);
-        notifyItemChanged(getLoadMoreViewPosition());
+//        notifyItemChanged(getLoadMoreViewPosition());
+        notifyDataSetChanged();
     }
 
     /**

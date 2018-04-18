@@ -145,19 +145,7 @@ public abstract class BaseFragment extends android.support.v4.app.Fragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        if (EventBus.getDefault().isRegistered(this)) {
-            return;
-        }
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
     public void onDestroyView() {
-        if (EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().unregister(this);
-        }
         if (subscription != null && !subscription.isUnsubscribed()) {
             subscription.unsubscribe();
         }
