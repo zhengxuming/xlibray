@@ -10,13 +10,9 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.google.gson.Gson;
-import com.luck.picture.lib.rxbus2.Subscribe;
-import com.luck.picture.lib.rxbus2.ThreadMode;
 import com.orhanobut.logger.Logger;
 import com.steven.baselibrary.utils.NetworkUtils;
-import com.steven.baselibrary.utils.Preferences;
 import com.steven.baselibrary.utils.ScreenUtils;
 import com.steven.baselibrary.utils.network.BaseApi;
 import com.steven.baselibrary.utils.network.HttpCallback;
@@ -24,9 +20,6 @@ import com.steven.baselibrary.utils.network.HttpUtil;
 import com.steven.baselibrary.widget.MyToast;
 import com.steven.baselibrary.widget.ProgressDialog;
 import com.zxm.xlibray.bean.BaseBean;
-
-import org.greenrobot.eventbus.EventBus;
-
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
@@ -41,7 +34,6 @@ public abstract class BaseFragment extends android.support.v4.app.Fragment {
 
     protected Subscription subscription;
     public ProgressDialog progressDialog;
-    public static final int LOGIN_CODE = 666;
 
     @Nullable
     @Override
@@ -122,7 +114,6 @@ public abstract class BaseFragment extends android.support.v4.app.Fragment {
                     callBack.onSuccess(response.getData());
                 } else {
                     if (response.getErr_code().equals("invalid_token") || response.getErr_code().equals("unauthorized_request")) {
-                        ((BaseActivity) getActivity()).clearWebViewCache();
 //                        Preferences.setLoginToken("");
 //                        openActivity(LoginWebActivity.class, LoginWebActivity.ACT_FROM, "token");
                         getActivity().finish();

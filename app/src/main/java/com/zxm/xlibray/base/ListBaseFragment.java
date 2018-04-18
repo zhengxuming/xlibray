@@ -54,8 +54,8 @@ public abstract class ListBaseFragment<ADT, AD extends BaseQuickAdapter> extends
 
     @Override
     public void initViews(View view) {
-        rv_list = (RecyclerView) view.findViewById(com.steven.baselibrary.R.id.recycle_view);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(com.steven.baselibrary.R.id.refresh_view);
+        rv_list = view.findViewById(com.steven.baselibrary.R.id.recycle_view);
+        mSwipeRefreshLayout = view.findViewById(com.steven.baselibrary.R.id.refresh_view);
         LayoutInflater inflater = LayoutInflater.from(getActivity());
         viewLoading = inflater.inflate(com.steven.baselibrary.R.layout.loading_view, null);
         viewNoData = inflater.inflate(com.steven.baselibrary.R.layout.empty_view, null);
@@ -72,7 +72,7 @@ public abstract class ListBaseFragment<ADT, AD extends BaseQuickAdapter> extends
         rv_list.setLayoutManager(manager);
         rv_list.setAdapter(adapter);
         setOnRefreshListener(this);
-        this.adapter.setOnLoadMoreListener(this);
+        this.adapter.setOnLoadMoreListener(this,rv_list);
         adapter.setEmptyView(viewLoading);
     }
 
@@ -252,9 +252,7 @@ public abstract class ListBaseFragment<ADT, AD extends BaseQuickAdapter> extends
             if (isShowEmptyView)
                 addEmptyView();
             adapter.setNewData(newData);
-            //   adapter.getData().clear();
             adapter.notifyDataSetChanged();
-            //     adapter.removeAllFooterView();
             return;
         }
         if (currentPage == 1) {
@@ -278,7 +276,6 @@ public abstract class ListBaseFragment<ADT, AD extends BaseQuickAdapter> extends
             } else if (newData.size() < perPageSize) {
                 setLoadMoreEnable(false);
                 adapter.addData(newData);
-                adapter.notifyDataSetChanged();
                 toEnd();
             } else {
                 setLoadMoreEnable(true);
@@ -309,7 +306,6 @@ public abstract class ListBaseFragment<ADT, AD extends BaseQuickAdapter> extends
                 if (v_emptyText != null && v_emptyText instanceof TextView)
                     ((TextView) v_emptyText).setText(emptyMessage);
             }
-//            AutoUtils.auto(emptyView);
         }
         return emptyView;
     }

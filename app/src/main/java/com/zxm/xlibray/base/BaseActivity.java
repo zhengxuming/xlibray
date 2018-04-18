@@ -2,7 +2,6 @@ package com.zxm.xlibray.base;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,10 +12,7 @@ import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
 import android.widget.FrameLayout;
-
 import com.google.gson.Gson;
 import com.orhanobut.logger.Logger;
 import com.steven.baselibrary.App;
@@ -30,9 +26,6 @@ import com.steven.baselibrary.widget.ProgressDialog;
 import com.steven.baselibrary.widget.TitleBar;
 import com.zxm.xlibray.R;
 import com.zxm.xlibray.bean.BaseBean;
-
-import org.greenrobot.eventbus.EventBus;
-
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
@@ -45,10 +38,10 @@ import rx.schedulers.Schedulers;
 
 public abstract class BaseActivity extends FragmentActivity {
 
-    protected Subscription subscription;
     public int layoutId = 0;
     public TitleBar titleBar;
     public Context context;
+    protected Subscription subscription;
     public ProgressDialog progressDialog;
 
     @Override
@@ -69,13 +62,13 @@ public abstract class BaseActivity extends FragmentActivity {
         layoutId = setLayoutId();
         if (layoutId > 0) {
             super.setContentView(layoutId);
-            titleBar = (TitleBar) findViewById(com.steven.baselibrary.R.id.title_bar);
+            titleBar = findViewById(com.steven.baselibrary.R.id.title_bar);
         }
     }
 
     public abstract int setLayoutId();
 
-    public void onRefresh(){};
+    public void onRefresh(){}
 
     /**
      * 沉浸式状态栏
@@ -97,7 +90,6 @@ public abstract class BaseActivity extends FragmentActivity {
             if (layoutId > 0 && null != titleBar) {
                 int top = ScreenUtils.getSystemBarHeight(this);
                 titleBar.setBackgroundColor(ContextCompat.getColor(this, com.steven.baselibrary.R.color.main_theme_color));
-//                titleBar.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 titleBar.requestLayout();
                 titleBar.setPadding(0, top, 0, 0);
             }
@@ -109,7 +101,7 @@ public abstract class BaseActivity extends FragmentActivity {
 
     public View getContentView() {
         ViewGroup view = (ViewGroup) getWindow().getDecorView();
-        FrameLayout content = (FrameLayout) view.findViewById(android.R.id.content);
+        FrameLayout content = view.findViewById(android.R.id.content);
         return content.getChildAt(0);
     }
 
@@ -160,7 +152,6 @@ public abstract class BaseActivity extends FragmentActivity {
                     callBack.onSuccess(response.getData());
                 } else {
                     if (response.getErr_code().equals("invalid_token") || response.getErr_code().equals("unauthorized_request")) {
-                        clearWebViewCache();
 //                        Preferences.setLoginToken("");
 //                        openActivity(LoginWebActivity.class, LoginWebActivity.ACT_FROM, "token");
                         finish();
@@ -285,16 +276,6 @@ public abstract class BaseActivity extends FragmentActivity {
     public void finish() {
         super.finish();
         overridePendingTransition(com.steven.baselibrary.R.anim.left_in, com.steven.baselibrary.R.anim.right_out);
-    }
-
-    public void clearWebViewCache() {
-        // 清除cookie即可彻底清除缓存
-        CookieSyncManager.createInstance(this);
-        CookieManager.getInstance().removeAllCookie();
-        CookieManager.getInstance().removeSessionCookie();
-        CookieSyncManager.getInstance().sync();
-        deleteDatabase("WebView.db");
-        getCacheDir().delete();
     }
 
 }

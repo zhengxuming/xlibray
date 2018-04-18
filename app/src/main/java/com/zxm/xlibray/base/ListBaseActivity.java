@@ -70,18 +70,18 @@ public abstract class ListBaseActivity<ADT, AD extends BaseQuickAdapter> extends
     public void initListView(AD madapter, RecyclerView.LayoutManager manager) {
         this.adapter = madapter;
         rv_list.setLayoutManager(manager);
-        setOnRefreshListener(this);
-        this.adapter.setOnLoadMoreListener(this);
         setAdapter(madapter, null);
+        setOnRefreshListener(this);
+        this.adapter.setOnLoadMoreListener(this,rv_list);
         adapter.setEmptyView(viewNoData);
     }
 
     public void initListView(AD madapter, RecyclerView.LayoutManager manager, boolean hasEmptyView) {
         this.adapter = madapter;
         rv_list.setLayoutManager(manager);
-        setOnRefreshListener(this);
-        this.adapter.setOnLoadMoreListener(this);
         setAdapter(madapter, null);
+        setOnRefreshListener(this);
+        this.adapter.setOnLoadMoreListener(this,rv_list);
         if (hasEmptyView) {
             adapter.setEmptyView(viewNoData);
         }
@@ -252,9 +252,7 @@ public abstract class ListBaseActivity<ADT, AD extends BaseQuickAdapter> extends
             if (isShowEmptyView)
                 addEmptyView();
             adapter.setNewData(newData);
-            //   adapter.getData().clear();
             adapter.notifyDataSetChanged();
-            //     adapter.removeAllFooterView();
             return;
         }
         if (currentPage == 1) {
@@ -276,7 +274,6 @@ public abstract class ListBaseActivity<ADT, AD extends BaseQuickAdapter> extends
                 setLoadMoreEnable(false);
             } else if (newData.size() < perPageSize) {
                 adapter.addData(newData);
-                adapter.notifyDataSetChanged();
                 toEnd();
             } else {
                 setLoadMoreEnable(true);
@@ -307,7 +304,6 @@ public abstract class ListBaseActivity<ADT, AD extends BaseQuickAdapter> extends
                 if (v_emptyText != null && v_emptyText instanceof TextView)
                     ((TextView) v_emptyText).setText(emptyMessage);
             }
-//            AutoUtils.auto(emptyView);
         }
         return emptyView;
     }
